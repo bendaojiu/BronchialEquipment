@@ -153,34 +153,35 @@ int fgetc(FILE *f)
 
 
 /*****************  发送一个字符 **********************/
-void USART_SendByte( USART_TypeDef * pUSARTx, uint8_t ch)
+void USART_SendByte(uint8_t ch)
 {
 	/* 发送一个字符到USART */
-	USART_SendData(pUSARTx,ch);
-		
+	USART_SendData(USART2,ch);
+	
 	/* 等待发送数据寄存器为空 */
-	while (USART_GetFlagStatus(pUSARTx, USART_FLAG_TXE) == RESET);	
+	while (USART_GetFlagStatus(USART2, USART_FLAG_TXE) == RESET);	
 }
 
 
 /*****************  发送字符串 **********************/
-void USART_SendString( USART_TypeDef * pUSARTx, char *str)
+void USART_SendString(  char *str)
 {
+
 	unsigned int k=0;
   do 
   {
-      USART_SendByte( pUSARTx, *(str + k) );
+      USART_SendByte( *(str + k) );
       k++;
   } while(*(str + k)!='\0');
   
   /* 等待发送完成 */
-  while(USART_GetFlagStatus(pUSARTx,USART_FLAG_TC)==RESET)
+  while(USART_GetFlagStatus(USART1,USART_FLAG_TC)==RESET)
   {}
 }
 
 
 /*****************  发送一个16位数 **********************/
-void USART_SendHalfWord( USART_TypeDef * pUSARTx, uint16_t ch)
+void USART_SendHalfWord(  uint16_t ch)
 {
 	uint8_t temp_h, temp_l;
 	
@@ -190,12 +191,27 @@ void USART_SendHalfWord( USART_TypeDef * pUSARTx, uint16_t ch)
 	temp_l = ch&0XFF;
 	
 	/* 发送高8位 */
-	USART_SendData(pUSARTx,temp_h);	
-	while (USART_GetFlagStatus(pUSARTx, USART_FLAG_TXE) == RESET);
+	USART_SendData(USART1,temp_h);	
+	while (USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
 	
 	/* 发送低8位 */
-	USART_SendData(pUSARTx,temp_l);	
-	while (USART_GetFlagStatus(pUSARTx, USART_FLAG_TXE) == RESET);	
+	USART_SendData(USART1,temp_l);	
+	while (USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);	
 }
+
+
+
+
+
+
+char USART_ReceiveByte(void)
+{
+
+return (char)USART_ReceiveData(USART2);
+
+}
+
+
+
 
 /*********************************************END OF FILE**********************/

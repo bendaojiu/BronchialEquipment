@@ -135,6 +135,8 @@ void PendSV_Handler(void)
 {
 }
 
+
+extern void TimingDelay_Decrement(void);
 /**
   * @brief  This function handles SysTick Handler.
   * @param  None
@@ -165,7 +167,7 @@ void USART1_IRQHandler(void)
 		USART_SendData(USART2, ch);
 		
 		while(USART_GetFlagStatus(USART1, USART_FLAG_TC) == RESET);
-		while(USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET);
+	//	while(USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET);
 		//USART_ClearITPendingBit(USART1,USART_IT_RXNE);
 
 	} 

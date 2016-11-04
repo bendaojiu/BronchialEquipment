@@ -27,70 +27,6 @@ uint16_t pos[2] = {76, 504};//代表坐标远点的像素位置（十进制）
 void valueToStr(int value, int value1, char *x1, char *y1);
 
 
-void WoShou(void)
-{
-	char ch[]="AA00CC33C33C";
-	send(ch);
-}
-
-//用背景色清屏指令
-void QingPing(void)
-{
-	char qingping[]="AA52CC33C33C";
-	send(qingping);
-	
-}
-
-//蜂鸣器10ms，用于比较长时间名叫
-void buzzer_long(void)
-{
-	send("AA792FCC33C33C");
-}
-
-//设置当前调色板，
-//ch1为前景色，ch2为背景色
-void setColor(char *ch1, char *ch2)
-{
-	char ch[20];
-	sprintf(ch, "AA40%s%s%s", ch1, ch2, END);
-	send(ch);
-}
-
-//显示RTC时钟
-//指令为 AA 9B FF <RTC_Mode> <Text_Mode> <Color> <X> <Y> CC 33 C3 3C
-//此处显示模式默认为01，字体默认12*24，默认颜色为红色，X、Y坐标默认"0226"、"023A"，坐标为（550， 570）十进制
-void showTime(void)
-{
-	char ch[40];
-	sprintf(ch, "%s%s%s%s", "AA9BFF0103F800", "0226", "023A", END);
-	send(ch);
-}
-
-//在屏幕左下角显示状态
-//00位显示“设备正常，请连接导管”
-//01为显示“设备正常，等待治疗开始。。。”
-//02为显示“治疗中。。。”
-//坐标为（10，570）
-//注意：使用前，需要清除当前区域显示，否则会叠加于其上
-void showStatus(int i)
-{
-	if (0==i)
-		send("AA6F000A023AC9E8B1B8D5FDB3A3A3ACC7EBC1ACBDD3B5BCB9DCCC33C33C");
-	else if (1==i)
-		send("AA6F000A023AC9E8B1B8D5FDB3A3A3ACB5C8B4FDD6CEC1C6BFAACABCA1A3A1A3A1A3CC33C33C");
-	else if (2==i)
-		send("AA6F000A023AD6CEC1C6D6D0A1A3A1A3A1A3CC33C33C"); 
-}
-
-//显示图片，
-//ch为字符串形式的图片索引ID
-void showPicture(char *ch)
-{
-	char ch1[20];
-	sprintf(ch1, "AA70%s%s", ch, END);
-	send(ch1);
-}
-
 //画出连接（x1，y1）（x2，y2）两个点的连线
 //void drawLine(char *x1, char *y1, char *x2, char *y2)
 //{
@@ -220,7 +156,7 @@ void showSetTime(int i)
 	send(ch);
 }
 
-//显示设置的治疗时间，坐标为（635， 200）
+//显示设置的治疗温度，坐标为（635， 200）
 void showSetTemp(int i)
 {
 	char ch[40] = {0};
@@ -241,8 +177,8 @@ void showSetTemp(int i)
 	send(ch);
 }
 
-//显示设置的治疗时间，坐标为（635， 340）
-void showSetPos(int i)
+//显示设置的治疗功率，坐标为（635， 340）
+void showSetPow(int i)
 {
 	char ch[40] = {0};
 	//现将该区域显示清除

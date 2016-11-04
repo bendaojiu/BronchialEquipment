@@ -351,7 +351,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F10X_HD, USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\Libraries\CMSIS;..\..\User;..\..\Libraries\FWlib\inc;..\..\User\usart;..\..\User\SysTick;..\..\User\led</IncludePath>
+              <IncludePath>..\..\Libraries\CMSIS;..\..\User;..\..\Libraries\FWlib\inc;..\..\User\usart;..\..\User\SysTick;..\..\User\led;..\..\User\DwinLcd</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -578,11 +578,6 @@
               <FilePath>..\..\User\usart\bsp_usart1.c</FilePath>
             </File>
             <File>
-              <FileName>demo.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\demo.c</FilePath>
-            </File>
-            <File>
               <FileName>bsp_SysTick.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\SysTick\bsp_SysTick.c</FilePath>
@@ -591,6 +586,11 @@
               <FileName>bsp_led.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\led\bsp_led.c</FilePath>
+            </File>
+            <File>
+              <FileName>DwinLcd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\DwinLcd\DwinLcd.c</FilePath>
             </File>
           </Files>
         </Group>

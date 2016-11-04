@@ -14,3 +14,4 @@
 ..\..\output\main.o: ..\..\User\SysTick\bsp_SysTick.h
 ..\..\output\main.o: ..\..\User\led\bsp_led.h
 ..\..\output\main.o: ..\..\User\demo.h
+..\..\output\main.o: ..\..\User\DwinLcd\DwinLcd.h

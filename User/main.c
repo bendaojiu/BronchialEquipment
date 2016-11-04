@@ -21,6 +21,7 @@
 #include "bsp_SysTick.h"
 #include "bsp_led.h"
 #include "demo.h"
+#include "DwinLcd.h"
 
 char pos_time[5] = "004C";//时间原点，及t=0的点
 char pos_temp[5] = "01F8";//温度零点，在实际中，以传感器得到的第一次为准
@@ -41,35 +42,43 @@ int main(void)
 	USART2_Config();
 	NVIC2_Configuration();
 	NVIC_Configuration();
-	setColor(COLOR_RED, COLOR_GREEN);
-	//send("AA55000000003235CC33C33C");
-	showPicture("00");
-	//buzzer_long();
+	LCD_Init(USART_SendByte,USART_ReceiveByte);
 
-	Delay_ms(1000);
-	showPicture("0001");
-	showStatus(2);
-	showTime();
-	showSetTime(37);
-	showSetTemp(60);
-	showSetPos(20);
-	setColor(COLOR_BLUE, COLOR_GREEN);
-	showCurrentTemp(1);
-	showCurrentPow(8);
-	drawLine(80, 480);
-	Delay_ms(1000);
-	showCurrentTemp(23);
-	showCurrentPow(24);
-	drawLine(120, 300);
-	Delay_ms(1000);
-	showCurrentTemp(145);
-	showCurrentPow(364);
-	drawLine(180, 380);
-	Delay_ms(1000);
-	showCurrentTemp(89);
-	showCurrentPow(98);
-	drawLine(220, 300);
-	drawLine(320, 400);
+	LCD_PictureToCache(0);
+	
+	LCD_CursorDisplay(110,100,100,100,1);
+	
+	
+//	setColor(COLOR_RED, COLOR_GREEN);
+//	showPicture("00");
+//	//buzzer_long();
+//	Delay_ms(1000);
+//	showPicture("0001");
+//	showStatus(0);
+//	showTime();
+//	showSetTime(37);
+//	showSetTemp(60);
+//	showSetPow(20);
+//	setColor(COLOR_BLUE, COLOR_GREEN);
+//	showCurrentTemp(1);
+//	showCurrentPow(8);
+//	drawLine(80, 480);
+//	Delay_ms(1000);
+//	showCurrentTemp(23);
+//	showCurrentPow(24);
+//	drawLine(120, 300);
+//	Delay_ms(1000);
+//	showCurrentTemp(145);
+//	showCurrentPow(364);
+//	drawLine(180, 380);
+//	Delay_ms(1000);
+//	showCurrentTemp(89);
+//	showCurrentPow(98);
+//	drawLine(220, 300);
+//	drawLine(320, 400);
+
+
+
 	for(;;)
 	{
 		LED1(ON);
@@ -79,5 +88,8 @@ int main(void)
 		Delay_ms(100);
 		LED2(OFF);
 	}
+	
+	
+	
 }
 /*********************************************END OF FILE**********************/
