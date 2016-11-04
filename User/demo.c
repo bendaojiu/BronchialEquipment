@@ -23,6 +23,23 @@ extern char pos_temp[5];
 uint16_t pos[2] = {76, 504};//代表坐标远点的像素位置（十进制）
 
 
+//存放接收的指令数据
+
+
+LCDRecvDataDef  LCDRecvData = {0};
+
+uint8_t LCDRecvDataMetux = 0;//如果为1，证明主程序正在处理LCD返回的数据，此时不对LCD返回数据进行处理 
+
+//结束
+
+
+
+//设定量初始化
+SetValue mySetValue = {70, 30, 20};
+
+
+
+
 
 void valueToStr(int value, int value1, char *x1, char *y1);
 
@@ -143,15 +160,15 @@ void showSetTime(int i)
 	send("AA9C02025B003C029B007C025B003CCC33C33C");
 	if (i < 10)//当要显示的数字小于10的时候，需要将坐标延后
 	{
-		sprintf(ch, "AA98029B003C24C107FFFF001F3%d%s", i, END);
+		sprintf(ch, "AA98029B003C24C107FFFF8B593%d%s", i, END);
 	}
 	else if(i < 100)//当要显示数字为2位的时候
 	{
-		sprintf(ch, "AA98027B003C24C107FFFF001F3%d3%d%s", i/10, i%10, END);			
+		sprintf(ch, "AA98027B003C24C107FFFF8B593%d3%d%s", i/10, i%10, END);			
 	}
 	else
 	{
-		sprintf(ch, "AA98025B003C24C107FFFF001F3%d3%d3%d%s", i/100, (i%100)/10, (i%100)%10, END);
+		sprintf(ch, "AA98025B003C24C107FFFF8B593%d3%d3%d%s", i/100, (i%100)/10, (i%100)%10, END);
 	}
 	send(ch);
 }
@@ -164,15 +181,15 @@ void showSetTemp(int i)
 	send("AA9C02025B00C8029B0108025B00C8CC33C33C");
 	if (i < 10)//当要显示的数字小于10的时候，需要将坐标延后
 	{
-		sprintf(ch, "AA98029B00C824C107FFFF001F3%d%s", i, END);
+		sprintf(ch, "AA98029B00C824C107FFFF8B593%d%s", i, END);
 	}
 	else if(i < 100)//当要显示数字为2位的时候
 	{
-		sprintf(ch, "AA98027B00C824C107FFFF001F3%d3%d%s", i/10, i%10, END);			
+		sprintf(ch, "AA98027B00C824C107FFFF8B593%d3%d%s", i/10, i%10, END);			
 	}
 	else
 	{
-		sprintf(ch, "AA98025B00C824C107FFFF001F3%d3%d3%d%s", i/100, (i%100)/10, (i%100)%10, END);
+		sprintf(ch, "AA98025B00C824C107FFFF8B593%d3%d3%d%s", i/100, (i%100)/10, (i%100)%10, END);
 	}
 	send(ch);
 }
@@ -185,15 +202,15 @@ void showSetPow(int i)
 	send("AA9C02025B0154029B0194025B0154CC33C33C");
 	if (i < 10)//当要显示的数字小于10的时候，需要将坐标延后
 	{
-		sprintf(ch, "AA98029B015424C107FFFF001F3%d%s", i, END);
+		sprintf(ch, "AA98029B015424C107FFFF8B593%d%s", i, END);
 	}
 	else if(i < 100)//当要显示数字为2位的时候
 	{
-		sprintf(ch, "AA98027B015424C107FFFF001F3%d3%d%s", i/10, i%10, END);			
+		sprintf(ch, "AA98027B015424C107FFFF8B593%d3%d%s", i/10, i%10, END);			
 	}
 	else
 	{
-		sprintf(ch, "AA98025B015424C107FFFF001F3%d3%d3%d%s", i/100, (i%100)/10, (i%100)%10, END);
+		sprintf(ch, "AA98025B015424C107FFFF8B593%d3%d3%d%s", i/100, (i%100)/10, (i%100)%10, END);
 	}
 	send(ch);
 }
@@ -235,10 +252,9 @@ uint8_t valueToHex(char ch)
   return result;
 }
 
-//将数字转换为ASCII，以便于显示
-void int2ASCII(int i, char *ch1)
-{
-}
+
+
+
 
 void valueToStr(int value, int value1, char *x1, char *y1)
 {
@@ -266,3 +282,74 @@ void valueToStr(int value, int value1, char *x1, char *y1)
 			y1[tmp_j++] = y2[tmp_i--];
     
 }
+
+
+//用于处理LCD返回的数据
+void OperationLCDRecvData(dataUnit buf)
+{
+
+	uint8_t LCDRecvDataNum = 0;//用于存储处理的位数
+	if (buf[LCDRecvDataNum] == 0xAA)	//这是返回数据头
+	{
+		LCDRecvDataNum += 1;
+		if (buf[LCDRecvDataNum] == 0x73)	//73代表按压触摸屏（按下）
+		{
+			LCDRecvDataNum += 1;
+			//printf("地区(%x%x, %x%x)已经按下\n", buf[LCDRecvDataNum], buf[LCDRecvDataNum + 1], buf[LCDRecvDataNum + 2],buf[LCDRecvDataNum + 3]);
+			//处理按下代码
+		}
+		else if (buf[LCDRecvDataNum] == 0x72)	//72代表离开触摸屏（按下结束）
+		{
+			LCDRecvDataNum += 1;
+			if ( ((buf[LCDRecvDataNum]==0x2 && buf[LCDRecvDataNum+1]>0xF0) || (buf[LCDRecvDataNum]==0x3 && buf[LCDRecvDataNum+1]<0x14)) &&
+					 (buf[LCDRecvDataNum+2]==0x0 &&(buf[LCDRecvDataNum+3]>0x38 && buf[LCDRecvDataNum+3]<0x5C)) )//治疗时间增加按钮按下
+			{
+				mySetValue.time += 1;
+				showSetTime(mySetValue.time);
+			}
+			else if ( ((buf[LCDRecvDataNum]==0x2 && buf[LCDRecvDataNum+1]>0xF0) || (buf[LCDRecvDataNum]==0x3 && buf[LCDRecvDataNum+1]<0x14)) &&
+					 (buf[LCDRecvDataNum+2]==0x0 &&(buf[LCDRecvDataNum+3]>0x65 && buf[LCDRecvDataNum+3]<0x89)) )//治疗时间减少按钮按下
+			{
+				mySetValue.time -= 1;
+				showSetTime(mySetValue.time);
+			}
+			else if ( ((buf[LCDRecvDataNum]==0x2 && buf[LCDRecvDataNum+1]>0xF0) || (buf[LCDRecvDataNum]==0x3 && buf[LCDRecvDataNum+1]<0x14)) &&
+					 (buf[LCDRecvDataNum+2]==0x0 && (buf[LCDRecvDataNum+3]>0xC3 && buf[LCDRecvDataNum+3]<0xE9)) )//温度增加按钮按下
+			{
+				mySetValue.temp += 1;
+				showSetTemp(mySetValue.temp);
+			}
+			else if ( ((buf[LCDRecvDataNum]==0x2 && buf[LCDRecvDataNum+1]>0xF0) || (buf[LCDRecvDataNum]==0x3 && buf[LCDRecvDataNum+1]<0x14)) &&
+					 ((buf[LCDRecvDataNum+2]==0x0 && buf[LCDRecvDataNum+3]>0xF0) || (buf[LCDRecvDataNum+2]==0x1 && buf[LCDRecvDataNum+3]<0x16)) )//温度减少按钮按下
+			{
+				mySetValue.temp -= 1;
+				showSetTemp(mySetValue.temp);
+			}
+			else if ( ((buf[LCDRecvDataNum]==0x2 && buf[LCDRecvDataNum+1]>0xF0) || (buf[LCDRecvDataNum]==0x3 && buf[LCDRecvDataNum+1]<0x14)) &&
+					 (buf[LCDRecvDataNum+2]==0x1 && (buf[LCDRecvDataNum+3]>0x4E && buf[LCDRecvDataNum+3]<0x75)) )//治疗功率增加按钮按下
+			{
+				mySetValue.pow += 1;
+				showSetPow(mySetValue.pow);
+			}
+			else if ( ((buf[LCDRecvDataNum]==0x2 && buf[LCDRecvDataNum+1]>0xF0) || (buf[LCDRecvDataNum]==0x3 && buf[LCDRecvDataNum+1]<0x14)) &&
+					 (buf[LCDRecvDataNum+2]==0x1 && (buf[LCDRecvDataNum+3]>0x7D && buf[LCDRecvDataNum+3]<0xA1)) )//治疗功率减少按钮按下
+			{
+				mySetValue.pow -= 1;
+				showSetPow(mySetValue.pow);
+			}
+						
+			//处理按下结束代码
+			
+		}
+		else
+		{
+			//其他代码暂不处理
+		}
+	}
+	else //数据头不对，则丢弃该数据
+	{
+		;
+	}
+}
+
+

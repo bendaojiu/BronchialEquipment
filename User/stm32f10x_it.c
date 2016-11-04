@@ -27,9 +27,14 @@
 #include "stm32f10x_it.h"
 #include "bsp_usart1.h"
 #include <stdio.h>
+#include "demo.h"
 
 
+extern LCDRecvDataDef  LCDRecvData;//用于存储LCD返回数据的空间
 
+extern uint8_t LCDRecvDataMetux;//如果为真，证明主程序正在处理LCD返回的数据，此时不对LCD返回数据进行处理 
+
+uint8_t LCDRecvNum = 0;//LCD返回一条指令的第几位
 
 
 /** @addtogroup STM32F10x_StdPeriph_Template
@@ -182,9 +187,39 @@ void USART2_IRQHandler(void)
 	{ 	
 	    //ch = USART1->DR;
 			ch = USART_ReceiveData(USART2);
-	  //	printf( "%c", ch );    //将接受到的数据直接返回打印
-		USART_SendData(USART1, ch);
-		while(USART_GetFlagStatus(USART1, USART_FLAG_TC) == RESET);
+			
+//			printf( "%c\n", ch );    //将接受到的数据直接返回打印
+//			USART_SendData(USART1, ch);
+
+		if (LCDRecvData.num < 10 && LCDRecvDataMetux == 0)
+		{
+			LCDRecvDataMetux = 1;
+			LCDRecvData.recvData[LCDRecvData.num][LCDRecvNum] = ch;	//按位写入数据
+			
+				if (LCDRecvData.recvData[LCDRecvData.num][LCDRecvNum] == 0x3C &&
+						LCDRecvData.recvData[LCDRecvData.num][LCDRecvNum - 1] == 0xC3 &&
+						LCDRecvData.recvData[LCDRecvData.num][LCDRecvNum - 2] == 0x33 &&
+						LCDRecvData.recvData[LCDRecvData.num][LCDRecvNum - 3] == 0xCC)			//条件全部满足，证明接收的数据已经达到末尾
+				{
+					LCDRecvData.num += 1;
+					LCDRecvNum = 0;
+					LCDRecvDataMetux = 0;
+				}
+				else			//没有到达末尾继续接收
+				{
+					LCDRecvNum += 1;
+					//printf("%x\n", ch);
+					LCDRecvDataMetux = 0;
+				}
+		}
+		else
+		{
+			LCDRecvDataMetux = 0;//如果已经接收了10条数据，则不再接收，没有空间了
+		}
+			
+		
+		
+		while(USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET);
 		//USART_ClearITPendingBit(USART2,USART_IT_RXNE);
 	} 
 	 

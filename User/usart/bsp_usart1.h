@@ -11,9 +11,8 @@ void NVIC_Configuration(void);
 void NVIC2_Configuration(void);
 int fputc(int ch, FILE *f);
 int fgetc(FILE *f);
-void USART_SendByte(  uint8_t ch);
-void USART_SendString(  char *str);
-void USART_SendHalfWord(  uint16_t ch);
-char USART_ReceiveByte(void);
+void USART_SendByte( USART_TypeDef * pUSARTx, uint8_t ch);
+void USART_SendString( USART_TypeDef * pUSARTx, char *str);
+void USART_SendHalfWord( USART_TypeDef * pUSARTx, uint16_t ch);
 
 #endif /* __USART1_H */

@@ -24,6 +24,23 @@
 #define COLOR_BLACK "0000"
 #define COLOR_YELLOW "FFE0"
 
+typedef uint8_t dataUnit[20];	//定义接受LCD返回的单元，每个单元可容纳40个字节
+
+typedef struct{
+	uint8_t num;		//标志位，为0时代表没有数据接收，>0时，代表有几条数据，最大不超过10条，否则丢弃
+	dataUnit recvData[10];		//LCD返回数据存放
+}LCDRecvDataDef;		//用于存放返回数据
+
+
+//设定量初始化
+typedef struct{
+	int temp;
+	int pow;
+	int time;
+}SetValue;
+
+
+
 //屏幕功能宏替换
 #define WoShow() send("AA00CC33C33C")//用于握手
 #define QingPing() send("AA52CC33C33C")//用于清屏
@@ -81,7 +98,10 @@ void showSetPow(int i);//用于显示设置的治疗功率
 
 void send(char *ch);//用于发送指令
 uint8_t valueToHex(char ch);
-void int2ASCII(int i, char *ch1);//将i转换为ASCII格式
 void valueToStr(int value, int value1, char *x1, char *y1);//获得这个字符的十六进制中的半位
+
+													
+void OperationLCDRecvData(dataUnit buf);	//用于处理LCD返回的数据
+													
 
 #endif
